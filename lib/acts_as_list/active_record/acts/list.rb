@@ -38,7 +38,7 @@ module ActiveRecord
           configuration = { column: "position", scope: "1 = 1", top_of_list: 1, add_new_at: :bottom}
           configuration.update(options) if options.is_a?(Hash)
 
-          if configuration[:scope].is_a?(Symbol) && configuration[:scope].to_s !~ /_id$/
+          if configuration[:scope].is_a?(Symbol) && configuration[:scope].to_s !~ /_id|_uuid$/
             configuration[:scope] = :"#{configuration[:scope]}_id"
           end
 
@@ -112,10 +112,10 @@ module ActiveRecord
             end
 
             before_validation :check_top_position
-            
+
             before_destroy :lock!
             after_destroy :decrement_positions_on_lower_items
-            
+
             before_update :check_scope
             after_update :update_positions
 
@@ -455,7 +455,7 @@ module ActiveRecord
 
           def internal_scope_changed?
             return @scope_changed if defined?(@scope_changed)
-            
+
             @scope_changed = scope_changed?
           end
 
